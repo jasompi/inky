@@ -3,11 +3,13 @@ from .phat import InkyPHAT, InkyPHAT_SSD1608  # noqa: F401
 from .what import InkyWHAT                    # noqa: F401
 from .inky_uc8159 import Inky as InkyUC8159   # noqa: F401
 from .inky_ssd1683 import Inky as InkyWHAT_SSD1683  # noqa: F401
+from .epd_models import EPD_MODELS
+from .inky_epd import InkyEPD, InkyEPDBluetooth # Waveshare epd
 from . import eeprom
 import argparse
 
 
-DISPLAY_TYPES = ["what", "phat", "phatssd1608", "impressions", "7colour", "whatssd1683"]
+DISPLAY_TYPES = ["what", "phat", "phatssd1608", "impressions", "7colour", "whatssd1683"] + [m for m in EPD_MODELS.keys()]
 DISPLAY_COLORS = ["red", "black", "yellow"]
 
 
@@ -39,6 +41,7 @@ def auto(i2c_bus=None, ask_user=False, verbose=False):
         parser.add_argument('--simulate', '-s', action='store_true', default=False, help="Simulate Inky display")
         parser.add_argument('--type', '-t', type=str, required=True, choices=DISPLAY_TYPES, help="Type of display")
         parser.add_argument('--colour', '-c', type=str, required=False, choices=DISPLAY_COLORS, help="Display colour")
+        parser.add_argument('--btaddr', '-b', type=str, required=False, help="Bluetooth Address")
         args, _ = parser.parse_known_args()
         if args.simulate:
             cls = None
@@ -73,6 +76,11 @@ def auto(i2c_bus=None, ask_user=False, verbose=False):
                 return InkyWHAT_SSD1683(colour=args.colour)
             if args.type in ("impressions", "7colour"):
                 return InkyUC8159()
+            if args.type.startswith("epd"):
+                if args.btaddr:
+                    return InkyEPDBluetooth(args.btaddr, args.type, args.colour)
+                else:
+                    return InkyEPD(args.type, args.colour)
 
     if _eeprom is None:
         raise RuntimeError("No EEPROM detected! You must manually initialise your Inky board.")

@@ -18,7 +18,7 @@ inky_display.set_border(inky_display.WHITE)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--image', '-i', type=str, required=True, help="Input image to be converted/displayed")
-args = parser.parse_args()
+args, _ = parser.parse_known_args()
 
 img_file = args.image
 
@@ -32,9 +32,9 @@ w, h = img.size
 
 # Calculate the new height and width of the image
 
-h_new = 300
+h_new = inky_display.height
 w_new = int((float(w) / h) * h_new)
-w_cropped = 400
+w_cropped = inky_display.width
 
 # Resize the image with high-quality resampling
 

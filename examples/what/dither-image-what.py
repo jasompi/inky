@@ -38,7 +38,7 @@ w_cropped = inky_display.width
 
 # Resize the image with high-quality resampling
 
-img = img.resize((w_new, h_new), resample=Image.LANCZOS)
+img = img.resize((w_new, h_new), resample=Image.Resampling.LANCZOS)
 
 # Calculate coordinates to crop image to 400 pixels wide
 
